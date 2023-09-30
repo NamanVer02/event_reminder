@@ -47,7 +47,35 @@ class _HomeScreenState extends State<StatefulWidget> {
         ],
       ),
     );
-    AwesomeNotifications().dismiss((event.date.day * event.date.month + event.date.year) % event.title.length);
+    AwesomeNotifications().dismiss(
+        (event.date.day * event.date.month + event.date.year) %
+            event.title.length);
+  }
+
+  void checkEvents() {
+    for (var event in db.eventList) {
+      if (event.date.isBefore(DateTime.now().add(const Duration(days: 1)))) {
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text("Have you finished ${event.title} ?"),
+            actions: [
+              FilledButton(
+                onPressed: () {
+                  deleteEvent(event);
+                  setState(() {});
+                },
+                child: const Text("Yes"),
+              ),
+              TextButton(
+                onPressed: () {Navigator.of(context).pop();},
+                child: const Text("No"),
+              ),
+            ],
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -62,9 +90,16 @@ class _HomeScreenState extends State<StatefulWidget> {
     db.sortList();
     return Scaffold(
       appBar: AppBar(
-        title: Stack(children: [Image.asset("lib/plane.png", alignment: Alignment.centerLeft,), const Text("Upcoming Events"), ],),
+        title: Stack(
+          children: [
+            Image.asset(
+              "lib/plane.png",
+              alignment: Alignment.centerLeft,
+            ),
+            const Text("Upcoming Events"),
+          ],
+        ),
         backgroundColor: Theme.of(context).colorScheme.primary,
-        
         actions: [
           IconButton(
               onPressed: () {
@@ -109,25 +144,29 @@ class _HomeScreenState extends State<StatefulWidget> {
                 ),
                 itemCount: db.eventList.length,
                 itemBuilder: ((context, index) => Card(
-                  child: ListTile(
+                      child: ListTile(
                         title: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(db.eventList[index].title),
-                            Text(DateFormat('d MMMM, y').format(db.eventList[index].date)),
+                            Text(DateFormat('d MMMM, y')
+                                .format(db.eventList[index].date)),
                           ],
                         ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        tileColor: (db.eventList[index].date.isAfter(DateTime.now())) ? Theme.of(context).colorScheme.primaryContainer : Colors.redAccent,
+                        tileColor: (db.eventList[index].date.isAfter(
+                                DateTime.now().add(const Duration(days: 1))))
+                            ? Theme.of(context).colorScheme.primaryContainer
+                            : Colors.redAccent,
                         trailing: IconButton(
                             icon: const Icon(Icons.delete),
                             onPressed: () {
                               deleteEvent(db.eventList[index]);
                             }),
                       ),
-                )),
+                    )),
               ),
             ),
           ),
