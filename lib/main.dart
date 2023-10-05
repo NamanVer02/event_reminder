@@ -14,17 +14,19 @@ void main() async {
   await Hive.openBox("events");
 
   await Permission.notification.isDenied.then((value) {
-        if (value) {
-          Permission.notification.request();
-        }
-      });
+    if (value) {
+      Permission.notification.request();
+    }
+  });
   AwesomeNotifications().initialize(
     null,
-    [  
+    [
       NotificationChannel(
-          channelKey: "eventNotif",
-          channelName: "Event Reminders",
-          channelDescription: "Allow notifications of upcoming Events.")
+        channelKey: "eventNotif",
+        channelName: "Event Reminders",
+        channelDescription: "Allow notifications of upcoming Events.",
+        importance: NotificationImportance.Max,
+      )
     ],
     debug: true,
   );
@@ -38,10 +40,10 @@ class MyApp extends StatelessWidget {
   final lightTheme = ThemeData(
     useMaterial3: true,
     colorScheme:
-        ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 15, 104, 248))
+        ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 15, 104, 248))
             .copyWith(
-                primary: Color.fromARGB(255, 11, 141, 227),
-                primaryContainer: Color.fromARGB(149, 11, 151, 227)),
+                primary: const Color.fromARGB(255, 11, 141, 227),
+                primaryContainer: const Color.fromARGB(149, 11, 151, 227)),
     listTileTheme: const ListTileThemeData().copyWith(minLeadingWidth: 20),
     textTheme: GoogleFonts.nunitoTextTheme().copyWith(
       titleLarge: const TextStyle(
@@ -60,9 +62,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: lightTheme,
-      home: const HomeScreen()
-    );
+    return MaterialApp(theme: lightTheme, home: const HomeScreen());
   }
 }

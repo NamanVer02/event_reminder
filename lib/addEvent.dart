@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:event_reminder/data.dart';
 import 'package:event_reminder/event.dart';
@@ -70,9 +69,12 @@ class _AddEventScreenState extends State<AddEventScreen> {
       }
       await AwesomeNotifications().createNotification(
         content: NotificationContent(
-            id: (date.day * date.month + date.year) % title.text.length,
-            channelKey: "eventNotif",
-            title: notifs[random.nextInt(notifs.length)].replaceAll("[Event Name]", title.text)),
+          id: (date.day * date.month + date.year) % title.text.length,
+          channelKey: "eventNotif",
+          title: "Event Reminder",
+          body: notifs[random.nextInt(notifs.length)]
+              .replaceAll("[Event Name]", title.text),
+        ),
         schedule: NotificationCalendar(
           day: date.day,
           month: date.month,
@@ -81,38 +83,38 @@ class _AddEventScreenState extends State<AddEventScreen> {
           minute: time.minute,
         ),
       );
-
-      date.subtract(const Duration(minutes: 30));
-      AwesomeNotifications().createNotification(
+      await AwesomeNotifications().createNotification(
         content: NotificationContent(
-            id: (date.day * date.month + date.year) % title.text.length,
-            channelKey: "eventNotif",
-            title: notifs[random.nextInt(notifs.length)].replaceAll("[Event Name]", title.text)),
+          id: (date.day * date.month + date.year) % title.text.length,
+          channelKey: "eventNotif",
+          title: "Event Reminder",
+          body: notifs[random.nextInt(notifs.length)]
+              .replaceAll("[Event Name]", title.text),
+        ),
         schedule: NotificationCalendar(
-          day: date.day,
+          day: date.day-7,
           month: date.month,
           year: date.year,
           hour: time.hour,
           minute: time.minute,
         ),
       );
-      date.add(const Duration(minutes: 30));
-
-      date.subtract(const Duration(days: 7));
-      AwesomeNotifications().createNotification(
+      await AwesomeNotifications().createNotification(
         content: NotificationContent(
-            id: (date.day * date.month + date.year) % title.text.length,
-            channelKey: "eventNotif",
-            title: notifs[random.nextInt(notifs.length)].replaceAll("[Event Name]", title.text)),
+          id: (date.day * date.month + date.year) % title.text.length,
+          channelKey: "eventNotif",
+          title: "Event Reminder",
+          body: notifs[random.nextInt(notifs.length)]
+              .replaceAll("[Event Name]", title.text),
+        ),
         schedule: NotificationCalendar(
           day: date.day,
           month: date.month,
           year: date.year,
           hour: time.hour,
-          minute: time.minute,
+          minute: time.minute-30,
         ),
       );
-      date.add(const Duration(days: 7));
     }
 
     return Scaffold(
@@ -170,7 +172,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   widget.db.putData(Event(
                       title: title.text, date: date, description: des.text));
                   widget.db.updateList();
-                  print(widget.db.eventList.length);
                   Navigator.pop(context);
                 },
                 child: const Text('Add'),

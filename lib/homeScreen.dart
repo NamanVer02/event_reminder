@@ -5,6 +5,7 @@ import 'package:event_reminder/event.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -16,6 +17,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<StatefulWidget> {
   final EventData db = EventData();
+  bool firstBuild = true;
 
   void deleteEvent(Event event) {
     showDialog(
@@ -54,7 +56,7 @@ class _HomeScreenState extends State<StatefulWidget> {
 
   void checkEvents() {
     for (var event in db.eventList) {
-      if (event.date.isBefore(DateTime.now().add(const Duration(days: 1)))) {
+      if (DateTime.now().difference(event.date).inDays <= 2 && DateTime.now().difference(event.date).inDays >= 1) {
         showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
@@ -88,6 +90,12 @@ class _HomeScreenState extends State<StatefulWidget> {
   @override
   Widget build(BuildContext context) {
     db.sortList();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (firstBuild) {
+        firstBuild = false;
+        checkEvents();
+      }
+    });
     return Scaffold(
       appBar: AppBar(
         title: Stack(
